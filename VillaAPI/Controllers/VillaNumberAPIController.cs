@@ -83,11 +83,11 @@ namespace VillaAPI.Controllers
             {
                 if (await _db.GetAsync(u => u.VillaNo == createDTO.VillaNo) != null)
                 {
-                    ModelState.AddModelError("CustomError", "VillaNumber already Exists!");
+                    ModelState.AddModelError("ErrorMessage", "VillaNumber already Exists!");
                     return BadRequest(ModelState);
                 }
                 if(await _dbVilla.GetAsync(u => u.Id == createDTO.VillaID) == null) {
-                    ModelState.AddModelError("CustomError", "Villa ID is Invalid");
+                    ModelState.AddModelError("ErrorMessage", "Villa ID is Invalid");
                     return BadRequest(ModelState);
                 }
                 if (createDTO == null)
@@ -155,7 +155,7 @@ namespace VillaAPI.Controllers
                 }
                 if(await _dbVilla.GetAsync(u=> u.Id == updatedDTO.VillaID) == null)
                 {
-                    ModelState.AddModelError("CustomError", "Villa ID is Invalid");
+                    ModelState.AddModelError("ErrorMessage", "Villa ID is Invalid");
                     return BadRequest(ModelState);
                 }
                 VillaNumber model = _mapper.Map<VillaNumber>(updatedDTO);

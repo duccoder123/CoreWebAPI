@@ -57,7 +57,7 @@ namespace DemoAPI_Web.Services
             {
                 ApiType = SD.ApiType.PUT,
                 Data = entity,
-                Url = ApiUrl + "/api/VillaNumberAPI/" + entity.VillaID
+                Url = ApiUrl + "/api/VillaNumberAPI/" + entity.VillaNo
             });
         }
     }
