@@ -31,15 +31,19 @@ namespace VillaAPI.Repository
 
         public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO)
         {
-            var user = _db.LocalUsers.FirstOrDefault(u=> u.UserName.ToLower() == loginRequestDTO.Username.ToLower());
-            if(user == null)
+            var user = _db.LocalUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDTO.Username.ToLower());
+            if (user == null)
             {
-                return null;
+                return new LoginResponseDTO()
+                {
+                    Token = "",
+                    User = null
+                };
             }
             // if user was found generate JWT Token
 
             var TokenHandler = new JwtSecurityTokenHandler();
-            var key =  Encoding.ASCII.GetBytes(secretKey);
+            var key = Encoding.ASCII.GetBytes(secretKey);
 
             var TokenDecriptor = new SecurityTokenDescriptor
             {
