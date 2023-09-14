@@ -14,7 +14,7 @@ namespace VillaAPI.Controllers
         public UserController(IUserRepository userRepo)
         {
             _userRepo = userRepo;
-            this._response = new();
+            _response = new();
         }
 
         [HttpPost("login")]
