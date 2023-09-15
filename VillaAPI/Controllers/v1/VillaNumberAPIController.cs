@@ -9,10 +9,11 @@ using VillaAPI.Models;
 using VillaAPI.Models.Dto;
 using VillaAPI.Repository.IRepository;
 
-namespace VillaAPI.Controllers
+namespace VillaAPI.Controllers.v1
 {
-    [Route("api/VillaNumberAPI")]
+    [Route("api/v{version:apiVersion}/VillaNumberAPI")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class VillaNumberAPIController : ControllerBase
     {
         protected APIResponse _response;
@@ -23,17 +24,24 @@ namespace VillaAPI.Controllers
         {
             _db = db;
             _mapper = mapper;
-            this._response = new();
+            _response = new();
             _dbVilla = dbVilla;
         }
 
+        [HttpGet("GetString")]
+        public IEnumerable<string> Get()
+        {
+            return new string[] { "value1", "value2" };
+        }
+
         [HttpGet]
+        //[MapToApiVersion("1.0")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<APIResponse>> GetVillaNumbers()
         {
             try
             {
-                IEnumerable<VillaNumber> villaList = await _db.GetAllAsync(includeProperty:"Villa");
+                IEnumerable<VillaNumber> villaList = await _db.GetAllAsync(includeProperty: "Villa");
                 _response.Result = _mapper.Map<List<VillaNumberDTO>>(villaList);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
@@ -45,6 +53,7 @@ namespace VillaAPI.Controllers
             }
             return _response;
         }
+
         [HttpGet("{id:int}", Name = "GetVillaNumber")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -54,12 +63,14 @@ namespace VillaAPI.Controllers
             try
             {
                 if (id == 0)
-                {_response.StatusCode = HttpStatusCode.BadRequest;
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest();
                 }
                 var villaNumber = await _db.GetAsync(x => x.VillaNo == id);
                 if (villaNumber == null)
-                {_response.StatusCode = HttpStatusCode.NotFound;
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound();
                 }
                 _response.Result = _mapper.Map<VillaNumberDTO>(villaNumber);
@@ -73,7 +84,7 @@ namespace VillaAPI.Controllers
             }
             return _response;
         }
-        [Authorize(Roles ="admin")]
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -87,12 +98,14 @@ namespace VillaAPI.Controllers
                     ModelState.AddModelError("ErrorMessage", "VillaNumber already Exists!");
                     return BadRequest(ModelState);
                 }
-                if(await _dbVilla.GetAsync(u => u.Id == createDTO.VillaID) == null) {
+                if (await _dbVilla.GetAsync(u => u.Id == createDTO.VillaID) == null)
+                {
                     ModelState.AddModelError("ErrorMessage", "Villa ID is Invalid");
                     return BadRequest(ModelState);
                 }
                 if (createDTO == null)
-                {_response.StatusCode = HttpStatusCode.BadRequest;
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(createDTO);
                 }
 
@@ -128,7 +141,7 @@ namespace VillaAPI.Controllers
                 var villaNumber = await _db.GetAsync(i => i.VillaNo == id);
                 if (villaNumber == null)
                 {
-                    _response.StatusCode =HttpStatusCode.NotFound;
+                    _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound();
                 }
                 await _db.RemoveAsync(villaNumber);
@@ -152,10 +165,11 @@ namespace VillaAPI.Controllers
             try
             {
                 if (updatedDTO == null || id != updatedDTO.VillaNo)
-                {_response.StatusCode = HttpStatusCode.BadRequest;
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest();
                 }
-                if(await _dbVilla.GetAsync(u=> u.Id == updatedDTO.VillaID) == null)
+                if (await _dbVilla.GetAsync(u => u.Id == updatedDTO.VillaID) == null)
                 {
                     ModelState.AddModelError("ErrorMessage", "Villa ID is Invalid");
                     return BadRequest(ModelState);

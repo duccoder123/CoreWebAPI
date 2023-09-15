@@ -60,6 +60,7 @@ namespace DemoAPI_Web.Controllers
                 var response = await _villaNumberService.CreateAsync<APIResponse>(model.VillaNumber, HttpContext.Session.GetString(SD.SessionToke));
                 if (response != null & response.IsSuccess)
                 {
+                    TempData["success"] = "Villa Number Created Successfully";
                     return RedirectToAction(nameof(IndexVillaNumber));
                 }
                 else
@@ -94,6 +95,7 @@ namespace DemoAPI_Web.Controllers
             {
                 VillaNumberDTO model = JsonConvert.DeserializeObject<VillaNumberDTO>(Convert.ToString(response.Result));
                 villaNumberVM.VillaNumber = _mapper.Map<VillaNumberUpdateDTO>(model);
+                TempData["success"] = "Villa Number Updated Successfully";
             }
             response = await _villaService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToke));
             if (response != null && response.IsSuccess)

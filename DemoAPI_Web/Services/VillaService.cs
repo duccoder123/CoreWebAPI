@@ -20,7 +20,7 @@ namespace DemoAPI_Web.Services
             {
                 ApiType = SD.ApiType.POST,
                 Data = entity,
-                Url = ApiUrl + "/api/VillaAPI",
+                Url = ApiUrl + "/api/v1/VillaAPI",
                 Token = token
             });
         }
@@ -30,7 +30,7 @@ namespace DemoAPI_Web.Services
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.DELETE,
-                Url = ApiUrl + "/api/VillaAPI/" + id,
+                Url = ApiUrl + "/api/v1/VillaAPI/" + id,
                 Token = token
             });
         }
@@ -40,7 +40,7 @@ namespace DemoAPI_Web.Services
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.GET,
-                Url = ApiUrl + "/api/VillaAPI",
+                Url = ApiUrl + "/api/v1/VillaAPI",
                 Token = token
             });
         }
@@ -50,7 +50,7 @@ namespace DemoAPI_Web.Services
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.GET,
-                Url = ApiUrl + "/api/VillaAPI/" + id,
+                Url = ApiUrl + "/api/v1/VillaAPI/" + id,
                 Token = token
             });
         }
@@ -61,7 +61,7 @@ namespace DemoAPI_Web.Services
             {
                 ApiType = SD.ApiType.PUT,
                 Data = entity,
-                Url = ApiUrl + "/api/VillaAPI/" + entity.Id,
+                Url = ApiUrl + "/api/v1/VillaAPI/" + entity.Id,
                 Token = token
             });
         }
