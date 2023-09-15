@@ -3,8 +3,10 @@ using DemoAPI_Web.Models;
 using DemoAPI_Web.Models.Dto;
 using DemoAPI_Web.Services.IServices;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace DemoAPI_Web.Controllers
 {
@@ -31,6 +33,11 @@ namespace DemoAPI_Web.Controllers
             if(response != null && response.IsSuccess)
             {
                 LoginResponseDTO model = JsonConvert.DeserializeObject<LoginResponseDTO>(Convert.ToString(response.Result));
+                var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
+                identity.AddClaim (new Claim(ClaimTypes.Name, model.User.Name));
+                identity.AddClaim(new Claim(ClaimTypes.Role, model.User.Role));
+                var principal = new ClaimsPrincipal(identity);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
                 HttpContext.Session.SetString(SD.SessionToke, model.Token);
                 return RedirectToAction("Index", "Home");
             }
@@ -54,7 +61,7 @@ namespace DemoAPI_Web.Controllers
             APIResponse result = await _authService.RegisterAsync<APIResponse>(obj);
             if(result != null && result.IsSuccess)
             {
-                return RedirectToAction(nameof(Login));
+                return RedirectToAction(("Login"));
             }
             return View();
         }
@@ -66,7 +73,7 @@ namespace DemoAPI_Web.Controllers
             return RedirectToAction("Index","Home");
         }
 
-        public async Task<IActionResult> AccessDenied()
+        public IActionResult AccessDenied()
         {
             return View();
         }

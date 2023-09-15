@@ -31,7 +31,9 @@ namespace VillaAPI.Repository
 
         public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO)
         {
-            var user = _db.LocalUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDTO.Username.ToLower());
+            var user = _db.LocalUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDTO.Username.ToLower()
+            && u.Password == loginRequestDTO.Password
+            );
             if (user == null)
             {
                 return new LoginResponseDTO()
@@ -48,8 +50,8 @@ namespace VillaAPI.Repository
             var TokenDecriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, user.UserName.ToString()),
+                { 
+                    new Claim(ClaimTypes.Name, user.Id.ToString()),
                     new Claim(ClaimTypes.Role, user.Role)
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
@@ -75,8 +77,8 @@ namespace VillaAPI.Repository
                 Password = registerationRequestDTO.Password,
                 Role = registerationRequestDTO.Role
             };
-            _db.LocalUsers.AddAsync(localUser);
-            _db.SaveChanges();
+            _db.LocalUsers.Add(localUser);
+            await _db.SaveChangesAsync();
             localUser.Password = "";
             return localUser;
         }

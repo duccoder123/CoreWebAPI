@@ -4,10 +4,10 @@ namespace DemoAPI_Web.Services.IServices
 {
     public interface IVillaNumberService
     {
-        Task<T> GetAllAsync<T>();   
-        Task<T> GetAsync<T>(int id);
-        Task<T> CreateAsync<T>(VillaNumberCreateDTO entity);
-        Task<T> UpdateAsync<T>(VillaNumberUpdateDTO entity);
-        Task<T> DeleteAsync<T>(int id);
+        Task<T> GetAllAsync<T>(string token);   
+        Task<T> GetAsync<T>(int id, string token);
+        Task<T> CreateAsync<T>(VillaNumberCreateDTO entity, string token);
+        Task<T> UpdateAsync<T>(VillaNumberUpdateDTO entity, string token);
+        Task<T> DeleteAsync<T>(int id, string token);
     }
 }

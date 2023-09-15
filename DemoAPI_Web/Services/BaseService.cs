@@ -2,6 +2,7 @@
 using DemoAPI_Web.Models;
 using DemoAPI_Web.Services.IServices;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace DemoAPI_Web.Services
@@ -45,6 +46,10 @@ namespace DemoAPI_Web.Services
                 }
 
                 HttpResponseMessage apiResponse = null;
+                if (!string.IsNullOrEmpty(aPIRequest.Token))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", aPIRequest.Token);
+                }
                 apiResponse = await client.SendAsync(message);
 
                 var apiContent = await apiResponse.Content.ReadAsStringAsync();

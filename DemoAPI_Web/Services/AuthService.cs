@@ -12,7 +12,7 @@ namespace DemoAPI_Web.Services
         public AuthService(IHttpClientFactory httpClient, IConfiguration configuration ) : base(httpClient)
         {
             _httpClient = httpClient;
-            villaUrl = configuration.GetValue<string>("ServiceUrls:Secret");
+            villaUrl = configuration.GetValue<string>("ServiceUrls:DemoAPI");
         }
 
         public Task<T> LoginAsync<T>(LoginRequestDTO objTocreate)
@@ -21,7 +21,7 @@ namespace DemoAPI_Web.Services
             {
                 ApiType = SD.ApiType.POST,
                 Data = objTocreate,
-                Url = villaUrl + "/api/UserAuth/login"
+                Url = villaUrl + "/api/UsersAuth/login"
             });
         }
 
@@ -31,7 +31,7 @@ namespace DemoAPI_Web.Services
             {
                 ApiType = SD.ApiType.POST,
                 Data = obj,
-                Url = villaUrl + "/api/UserAuth/register"
+                Url = villaUrl + "/api/UsersAuth/register"
             });
         }
     }

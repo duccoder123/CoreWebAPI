@@ -14,50 +14,55 @@ namespace DemoAPI_Web.Services
             _httpClient = httpClient;
             ApiUrl = configuration.GetValue<string>("ServiceUrls:DemoAPI");
         }
-        public Task<T> CreateAsync<T>(VillaCreateDTO entity)
+        public Task<T> CreateAsync<T>(VillaCreateDTO entity, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.POST,
                 Data = entity,
-                Url = ApiUrl + "/api/VillaAPI"
+                Url = ApiUrl + "/api/VillaAPI",
+                Token = token
             });
         }
 
-        public Task<T> DeleteAsync<T>(int id)
+        public Task<T> DeleteAsync<T>(int id, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.DELETE,
-                Url = ApiUrl + "/api/VillaAPI/" + id
+                Url = ApiUrl + "/api/VillaAPI/" + id,
+                Token = token
             });
         }
 
-        public Task<T> GetAllAsync<T>()
+        public Task<T> GetAllAsync<T>(string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.GET,
-                Url = ApiUrl + "/api/VillaAPI"
+                Url = ApiUrl + "/api/VillaAPI",
+                Token = token
             });
         }
 
-        public Task<T> GetAsync<T>(int id)
+        public Task<T> GetAsync<T>(int id, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.GET,
-                Url = ApiUrl + "/api/VillaAPI/" + id
+                Url = ApiUrl + "/api/VillaAPI/" + id,
+                Token = token
             });
         }
 
-        public Task<T> UpdateAsync<T>(VillaUpdateDTO entity)
+        public Task<T> UpdateAsync<T>(VillaUpdateDTO entity, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 ApiType = SD.ApiType.PUT,
                 Data = entity,
-                Url = ApiUrl + "/api/VillaAPI/" + entity.Id
+                Url = ApiUrl + "/api/VillaAPI/" + entity.Id,
+                Token = token
             });
         }
     }
