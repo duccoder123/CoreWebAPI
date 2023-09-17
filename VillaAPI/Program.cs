@@ -147,8 +147,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(options => {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "VillaAPIV1");
         options.SwaggerEndpoint("/swagger/v2/swagger.json", "VillaAPIV2");
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "VillaAPIV1");
     }) ;
 }
 

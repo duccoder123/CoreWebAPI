@@ -60,7 +60,7 @@ namespace VillaAPI.Repository
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 { 
-                    new Claim(ClaimTypes.Name, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.UserName.ToString()),
                     new Claim(ClaimTypes.Role, roles.FirstOrDefault())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
@@ -73,7 +73,7 @@ namespace VillaAPI.Repository
                 // chuyển token thành chuỗi
                 Token = TokenHandler.WriteToken(token),
                 User = _mapper.Map<UserDTO>(user),
-                Roles = roles.FirstOrDefault()
+                //Roles = roles.FirstOrDefault()
             };
             return loginResponseDTO;
         }
