@@ -21,7 +21,8 @@ namespace DemoAPI_Web.Services
                 ApiType = SD.ApiType.POST,
                 Data = entity,
                 Url = ApiUrl + $"/api/{SD.CurrentAPIVersion}/VillaAPI",
-                Token = token
+                Token = token,
+                ContentType = SD.ContentType.MultipartFormData
             });
         }
 
@@ -62,7 +63,8 @@ namespace DemoAPI_Web.Services
                 ApiType = SD.ApiType.PUT,
                 Data = entity,
                 Url = ApiUrl + $"/api/{SD.CurrentAPIVersion}/VillaAPI/" + entity.Id,
-                Token = token
+                Token = token,
+                ContentType = SD.ContentType.MultipartFormData
             });
         }
     }

@@ -4,6 +4,7 @@ using DemoAPI_Web.Services.IServices;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
+using static DemoAPI_Utility.SD;
 
 namespace DemoAPI_Web.Services
 {
@@ -23,13 +24,46 @@ namespace DemoAPI_Web.Services
             {
                 var client = httpClient.CreateClient("DemoAPI");
                 HttpRequestMessage message = new HttpRequestMessage();
-                message.Headers.Add("Accept", "application/json");
-                message.RequestUri = new Uri(aPIRequest.Url);
-                if (aPIRequest.Data != null)
+                if (aPIRequest.ContentType == ContentType.MultipartFormData)
                 {
-                    message.Content = new StringContent(JsonConvert.SerializeObject(aPIRequest.Data), Encoding.UTF8, "application/json");
+                    message.Headers.Add("Accept", "*/*");
                 }
-                switch(aPIRequest.ApiType)
+                else
+                {
+                    message.Headers.Add("Accept", "application/json");
+                }
+                message.RequestUri = new Uri(aPIRequest.Url);
+                if (aPIRequest.ContentType == ContentType.MultipartFormData)
+                {
+                    var content = new MultipartFormDataContent();
+                    foreach (var prop in aPIRequest.Data.GetType().GetProperties())
+                    {
+                        var value = prop.GetValue(aPIRequest.Data);
+                        if (value is FormFile)
+                        {
+                            var file = (FormFile)value;
+                            if (file != null)
+                            {
+                                content.Add(new StreamContent(file.OpenReadStream()), prop.Name, file.Name);
+                            }
+                        }
+                        else
+                        {
+                            content.Add(new StringContent(value == null ? "" : value.ToString()), prop.Name);
+                        }
+                    }
+                    message.Content = content;
+                }
+                else
+                {
+                    if (aPIRequest.Data != null)
+                    {
+                        message.Content = new StringContent(JsonConvert.SerializeObject(aPIRequest.Data),
+                            Encoding.UTF8, "application/json");
+                    }
+                }
+
+                switch (aPIRequest.ApiType)
                 {
                     case SD.ApiType.POST:
                         message.Method = HttpMethod.Post;
@@ -56,7 +90,7 @@ namespace DemoAPI_Web.Services
                 try
                 {
                     APIResponse ApiResponse = JsonConvert.DeserializeObject<APIResponse>(apiContent);
-                    if(apiResponse != null && ( apiResponse.StatusCode == System.Net.HttpStatusCode.BadRequest
+                    if (apiResponse != null && (apiResponse.StatusCode == System.Net.HttpStatusCode.BadRequest
                         || apiResponse.StatusCode == System.Net.HttpStatusCode.NotFound))
                     {
                         ApiResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
@@ -66,7 +100,7 @@ namespace DemoAPI_Web.Services
                         return returnObj;
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     var exceptionResponse = JsonConvert.DeserializeObject<T>(apiContent);
                     return exceptionResponse;
@@ -74,7 +108,7 @@ namespace DemoAPI_Web.Services
                 var APIResponse = JsonConvert.DeserializeObject<T>(apiContent);
                 return APIResponse;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 var dto = new APIResponse
                 {

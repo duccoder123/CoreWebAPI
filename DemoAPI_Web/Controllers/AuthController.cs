@@ -5,6 +5,7 @@ using DemoAPI_Web.Services.IServices;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -39,11 +40,11 @@ namespace DemoAPI_Web.Controllers
                 var jwt = handler.ReadJwtToken(model.Token);
 
                 var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
-                identity.AddClaim (new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(u => u.Type == "name").Value));
+                identity.AddClaim (new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(u => u.Type == "unique_name").Value));
                 identity.AddClaim(new Claim(ClaimTypes.Role, jwt.Claims.FirstOrDefault(u => u.Type == "role").Value));
                 var principal = new ClaimsPrincipal(identity);
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-                HttpContext.Session.SetString(SD.SessionToke, model.Token);
+                HttpContext.Session.SetString(SD.AccessToken, model.Token);
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -56,6 +57,13 @@ namespace DemoAPI_Web.Controllers
         [HttpGet]
         public IActionResult Register()
         {
+                var roleList = new List<SelectListItem>()
+                {
+                    new SelectListItem{Text=SD.Admin, Value = SD.Admin},
+                    new SelectListItem{Text=SD.Customer, Value = SD.Customer}
+
+                };
+                ViewBag.RoleList = roleList;
             return View();
         }
 
@@ -63,18 +71,29 @@ namespace DemoAPI_Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterationRequestDTO obj)
         {
+            if(string.IsNullOrEmpty(obj.Role))
+            {
+                obj.Role = SD.Customer;
+            }
             APIResponse result = await _authService.RegisterAsync<APIResponse>(obj);
             if(result != null && result.IsSuccess)
             {
                 return RedirectToAction(("Login"));
             }
+            var roleList = new List<SelectListItem>()
+            {
+                new SelectListItem{Text=SD.Admin, Value = SD.Admin},
+                new SelectListItem{Text=SD.Customer, Value = SD.Customer}
+
+            };
+            ViewBag.RoleList = roleList;
             return View();
         }
 
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
-            HttpContext.Session.SetString(SD.SessionToke, "");
+            HttpContext.Session.SetString(SD.AccessToken, "");
             return RedirectToAction("Index","Home");
         }
 

@@ -92,12 +92,11 @@ namespace VillaAPI.Repository
                 var result = await _userManager.CreateAsync(user, registerationRequestDTO.Password);
                 if(result.Succeeded)
                 {
-                    if(!_roleManager.RoleExistsAsync("admin").GetAwaiter().GetResult())
+                    if(!_roleManager.RoleExistsAsync(registerationRequestDTO.Role).GetAwaiter().GetResult())
                     {
-                        await _roleManager.CreateAsync(new IdentityRole("admin"));
-                        await _roleManager.CreateAsync(new IdentityRole("customer"));
+                        await _roleManager.CreateAsync(new IdentityRole(registerationRequestDTO.Role));
                     }
-                    await _userManager.AddToRoleAsync(user, "admin");
+                    await _userManager.AddToRoleAsync(user, registerationRequestDTO.Role);
                     var userToReturn  = _db.ApplicationUsers
                         .FirstOrDefault(u=> u.UserName == registerationRequestDTO.UserName);
                     return _mapper.Map<UserDTO>(userToReturn);

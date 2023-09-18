@@ -22,7 +22,7 @@ namespace DemoAPI_Web.Controllers
         public async Task<IActionResult> Index()
         {
             List<VillaDTO> list = new();
-            var response = await _villaService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToke));
+            var response = await _villaService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.AccessToken));
             if (response != null & response.IsSuccess)
             {
                 list = JsonConvert.DeserializeObject<List<VillaDTO>>(Convert.ToString(response.Result));
