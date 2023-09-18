@@ -38,17 +38,16 @@ namespace VillaAPI.Repository
             return false;
         }
 
-        public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO)
+        public async Task<TokenDTO> Login(LoginRequestDTO loginRequestDTO)
         {
             var user = _db.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDTO.Username.ToLower());
 
             bool isValid = await _userManager.CheckPasswordAsync(user,loginRequestDTO.Password);
             if (user == null)
             {
-                return new LoginResponseDTO()
+                return new TokenDTO()
                 {
-                    Token = "",
-                    User = null
+                    Token = ""
                 };
             }
             // if user was found generate JWT Token
@@ -68,14 +67,13 @@ namespace VillaAPI.Repository
             };
 
             var token = TokenHandler.CreateToken(TokenDecriptor);
-            LoginResponseDTO loginResponseDTO = new LoginResponseDTO
+            TokenDTO tokenDTO = new TokenDTO
             {
                 // chuyển token thành chuỗi
-                Token = TokenHandler.WriteToken(token),
-                User = _mapper.Map<UserDTO>(user),
+                Token = TokenHandler.WriteToken(token)
                 //Roles = roles.FirstOrDefault()
             };
-            return loginResponseDTO;
+            return tokenDTO;
         }
 
         public async Task<UserDTO> Register(RegisterationRequestDTO registerationRequestDTO)
